@@ -1,5 +1,6 @@
 package com.boston311.config;
 
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -25,7 +26,7 @@ public class AppConfig {
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName(env.getProperty("spring.datasource.driver-class-name"));
+        ds.setDriverClassName(Objects.requireNonNull(env.getProperty("spring.datasource.driver-class-name")));
         ds.setUrl(env.getProperty("spring.datasource.url"));
         ds.setUsername(env.getProperty("spring.datasource.username"));
         ds.setPassword(env.getProperty("spring.datasource.password"));
@@ -50,7 +51,6 @@ public class AppConfig {
     }
 
     @Bean
-    @Autowired
     public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
         HibernateTransactionManager txManager = new HibernateTransactionManager();
         txManager.setSessionFactory(sessionFactory);
