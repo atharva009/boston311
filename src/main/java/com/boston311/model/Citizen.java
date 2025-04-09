@@ -2,6 +2,8 @@ package com.boston311.model;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "citizen")
 public class Citizen {
@@ -13,6 +15,13 @@ public class Citizen {
     private String name;
     private String email;
     private String phone;
+
+    private String password;
+    private String address;
+    private String zipcode;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date registeredAt;
 
     // Getters and Setters
     public int getId() { return id; }
@@ -26,4 +35,16 @@ public class Citizen {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getZipcode() { return zipcode; }
+    public void setZipcode(String zipcode) { this.zipcode = zipcode; }
+
+    public Date getRegisteredAt() { return registeredAt; }
+    public void setRegisteredAt(Date registeredAt) { this.registeredAt = registeredAt; }
 }

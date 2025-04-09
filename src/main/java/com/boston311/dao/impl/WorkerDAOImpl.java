@@ -2,10 +2,11 @@ package com.boston311.dao.impl;
 
 import com.boston311.dao.WorkerDAO;
 import com.boston311.model.Worker;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,23 +14,26 @@ import java.util.List;
 @Transactional
 public class WorkerDAOImpl implements WorkerDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private SessionFactory sessionFactory;
+
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
 
     @Override
     public void saveWorker(Worker worker) {
-        entityManager.persist(worker);
+        getSession().persist(worker);
     }
 
     @Override
     public Worker getWorkerById(int id) {
-        return entityManager.find(Worker.class, id);
+        return getSession().get(Worker.class, id);
     }
 
     @Override
     public List<Worker> getWorkersByDepartment(int departmentId) {
-        return entityManager.createQuery(
-                        "from Worker where department.id = :deptId", Worker.class)
+        return getSession().createQuery("from Worker where department.id = :deptId", Worker.class)
                 .setParameter("deptId", departmentId)
                 .getResultList();
     }

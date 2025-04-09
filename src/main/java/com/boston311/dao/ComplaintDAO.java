@@ -11,4 +11,5 @@ public interface ComplaintDAO {
     List<Complaint> getByDepartmentId(int deptId);
     void assignWorker(int complaintId, int workerId);
     void updateStatus(int complaintId, String status);
+    List<Complaint> getComplaintsByCitizenId(int citizenId);
 }

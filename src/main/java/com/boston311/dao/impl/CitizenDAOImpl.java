@@ -2,10 +2,11 @@ package com.boston311.dao.impl;
 
 import com.boston311.dao.CitizenDAO;
 import com.boston311.model.Citizen;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,21 +14,25 @@ import java.util.List;
 @Transactional
 public class CitizenDAOImpl implements CitizenDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private SessionFactory sessionFactory;
+
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
 
     @Override
     public void saveCitizen(Citizen citizen) {
-        entityManager.persist(citizen);
+        getSession().merge(citizen);
     }
 
     @Override
     public Citizen getCitizenById(int id) {
-        return entityManager.find(Citizen.class, id);
+        return getSession().get(Citizen.class, id);
     }
 
     @Override
     public List<Citizen> getAllCitizens() {
-        return entityManager.createQuery("from Citizen", Citizen.class).getResultList();
+        return getSession().createQuery("from Citizen", Citizen.class).getResultList();
     }
 }

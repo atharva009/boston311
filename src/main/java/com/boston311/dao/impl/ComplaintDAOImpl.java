@@ -3,10 +3,11 @@ package com.boston311.dao.impl;
 import com.boston311.dao.ComplaintDAO;
 import com.boston311.model.Complaint;
 import com.boston311.model.Worker;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,28 +15,35 @@ import java.util.List;
 @Transactional
 public class ComplaintDAOImpl implements ComplaintDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private SessionFactory sessionFactory;
+
+    // Convenience method to get the current Hibernate session
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
 
     @Override
     public void saveComplaint(Complaint complaint) {
-        entityManager.persist(complaint);
+        getSession().persist(complaint);
     }
 
     @Override
     public Complaint getComplaintById(int id) {
-        return entityManager.find(Complaint.class, id);
+        return getSession().get(Complaint.class, id);
     }
 
     @Override
     public List<Complaint> getAllComplaints() {
-        return entityManager.createQuery("from Complaint", Complaint.class).getResultList();
+        return getSession()
+                .createQuery("from Complaint", Complaint.class)
+                .getResultList();
     }
 
     @Override
     public List<Complaint> getByDepartmentId(int deptId) {
-        return entityManager.createQuery(
-                        "from Complaint where department.id = :deptId", Complaint.class)
+        return getSession()
+                .createQuery("from Complaint where department.id = :deptId", Complaint.class)
                 .setParameter("deptId", deptId)
                 .getResultList();
     }
@@ -43,15 +51,23 @@ public class ComplaintDAOImpl implements ComplaintDAO {
     @Override
     public void assignWorker(int complaintId, int workerId) {
         Complaint complaint = getComplaintById(complaintId);
-        Worker worker = entityManager.find(Worker.class, workerId);
+        Worker worker = getSession().get(Worker.class, workerId);
         complaint.setAssignedWorker(worker);
-        entityManager.merge(complaint);
+        getSession().merge(complaint);
     }
 
     @Override
     public void updateStatus(int complaintId, String status) {
         Complaint complaint = getComplaintById(complaintId);
         complaint.setStatus(status);
-        entityManager.merge(complaint);
+        getSession().merge(complaint);
+    }
+
+    @Override
+    public List<Complaint> getComplaintsByCitizenId(int citizenId) {
+        return getSession()
+                .createQuery("from Complaint where citizen.id = :cid", Complaint.class)
+                .setParameter("cid", citizenId)
+                .getResultList();
     }
 }
