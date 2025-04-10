@@ -35,17 +35,39 @@
 </head>
 <body>
 
+<!-- ✅ Profile updated toast -->
 <c:if test="${profileUpdated}">
-  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
-    <div id="toast" class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
+    <div id="toastProfile" class="toast align-items-center text-bg-success border-0" role="alert"
+         aria-live="assertive" aria-atomic="true"
+         data-bs-delay="5000" data-bs-autohide="true">
       <div class="d-flex">
         <div class="toast-body">
           ✅ Profile updated successfully!
         </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
     </div>
   </div>
+</c:if>
+
+<!-- 📝 Issue added toast -->
+<c:if test="${not empty sessionScope.issueAdded}">
+  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050">
+    <div id="toastIssue" class="toast align-items-center text-bg-success border-0" role="alert"
+         aria-live="assertive" aria-atomic="true"
+         data-bs-delay="5000" data-bs-autohide="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          📝 New issue reported successfully!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
+  <c:remove var="issueAdded" scope="session"/>
 </c:if>
 
 <div class="container dashboard-container">
@@ -95,6 +117,7 @@
         <option value="Open" ${selectedStatus == 'Open' ? 'selected' : ''}>Open</option>
         <option value="In Progress" ${selectedStatus == 'In Progress' ? 'selected' : ''}>In Progress</option>
         <option value="Resolved" ${selectedStatus == 'Resolved' ? 'selected' : ''}>Resolved</option>
+        <option value="Cancelled" ${selectedStatus == 'Cancelled' ? 'selected' : ''}>Cancelled</option>
       </select>
     </div>
     <div class="col-md-6">
@@ -129,7 +152,15 @@
             <td>${c.id}</td>
             <td>${c.description}</td>
             <td>${c.location}</td>
-            <td>${c.severity}</td>
+            <td>
+              <c:choose>
+                <c:when test="${c.severity == 1}">Low</c:when>
+                <c:when test="${c.severity == 2}">Medium</c:when>
+                <c:when test="${c.severity == 3}">High</c:when>
+                <c:when test="${c.severity == 4}">Urgent</c:when>
+                <c:otherwise>Unknown</c:otherwise>
+              </c:choose>
+            </td>
             <td>${c.status}</td>
             <td>${c.dateReported}</td>
             <td>
@@ -156,5 +187,20 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YNaIJG0Lxf+IP7zVPA13uXvb4+4nTP7k4T2gfTVXGQjMkFJAFIJkHQHRsiRxz3qE"
         crossorigin="anonymous"></script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const toastProfile = document.getElementById('toastProfile');
+    const toastIssue = document.getElementById('toastIssue');
+
+    if (toastProfile) {
+      new bootstrap.Toast(toastProfile).show();
+    }
+    if (toastIssue) {
+      new bootstrap.Toast(toastIssue).show();
+    }
+  });
+</script>
+
 </body>
 </html>

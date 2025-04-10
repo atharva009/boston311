@@ -20,9 +20,6 @@ public class Citizen {
     private String address;
     private String zipcode;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date registeredAt;
-
     // Getters and Setters
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
@@ -44,7 +41,4 @@ public class Citizen {
 
     public String getZipcode() { return zipcode; }
     public void setZipcode(String zipcode) { this.zipcode = zipcode; }
-
-    public Date getRegisteredAt() { return registeredAt; }
-    public void setRegisteredAt(Date registeredAt) { this.registeredAt = registeredAt; }
 }

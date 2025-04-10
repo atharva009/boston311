@@ -35,4 +35,17 @@ public class DepartmentDAOImpl implements DepartmentDAO {
     public List<Department> getAllDepartments() {
         return getSession().createQuery("from Department", Department.class).getResultList();
     }
+
+    @Override
+    public void updateDepartment(Department department) {
+        getSession().merge(department);
+    }
+
+    @Override
+    public void deleteDepartment(int id) {
+        Department dept = getDepartmentById(id);
+        if (dept != null) {
+            getSession().remove(dept);
+        }
+    }
 }

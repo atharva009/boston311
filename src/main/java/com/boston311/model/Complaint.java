@@ -14,7 +14,7 @@ public class Complaint {
 
     private String description;
     private String location;
-    private int severity;
+    private Integer severity;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateReported;
@@ -43,8 +43,8 @@ public class Complaint {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
-    public int getSeverity() { return severity; }
-    public void setSeverity(int severity) { this.severity = severity; }
+    public Integer getSeverity() { return severity; }
+    public void setSeverity(Integer severity) { this.severity = severity; }
 
     public Date getDateReported() { return dateReported; }
     public void setDateReported(Date dateReported) { this.dateReported = dateReported; }

@@ -25,7 +25,7 @@ public class ComplaintDAOImpl implements ComplaintDAO {
 
     @Override
     public void saveComplaint(Complaint complaint) {
-        getSession().persist(complaint);
+        getSession().merge(complaint);
     }
 
     @Override
