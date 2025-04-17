@@ -33,7 +33,9 @@ public class DepartmentDAOImpl implements DepartmentDAO {
 
     @Override
     public List<Department> getAllDepartments() {
-        return getSession().createQuery("from Department", Department.class).getResultList();
+        return getSession()
+                .createQuery("from Department", Department.class)
+                .getResultList();
     }
 
     @Override
@@ -47,5 +49,13 @@ public class DepartmentDAOImpl implements DepartmentDAO {
         if (dept != null) {
             getSession().remove(dept);
         }
+    }
+
+    @Override
+    public Department getDepartmentByEmail(String email) {
+        return getSession()
+                .createQuery("from Department where email = :email", Department.class)
+                .setParameter("email", email)
+                .uniqueResult();
     }
 }

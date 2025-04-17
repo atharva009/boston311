@@ -9,4 +9,5 @@ public interface DepartmentDAO {
     List<Department> getAllDepartments();
     void updateDepartment(Department department);
     void deleteDepartment(int id);
+    Department getDepartmentByEmail(String email);
 }
