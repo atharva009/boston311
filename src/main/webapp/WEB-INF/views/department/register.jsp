@@ -38,6 +38,9 @@
     .footer-link {
       font-size: 0.9rem;
     }
+    .text-danger {
+      font-size: 0.875rem;
+    }
   </style>
 </head>
 <body>
@@ -52,20 +55,24 @@
           <div class="row">
             <div class="col-md-6 mb-3">
               <label class="form-label">Department Name</label>
-              <form:input path="name" cssClass="form-control" required="true"/>
+              <form:input path="name" cssClass="form-control"/>
+              <form:errors path="name" cssClass="text-danger"/>
             </div>
             <div class="col-md-6 mb-3">
               <label class="form-label">Category</label>
-              <form:input path="category" cssClass="form-control" required="true"/>
+              <form:input path="category" cssClass="form-control"/>
+              <form:errors path="category" cssClass="text-danger"/>
             </div>
           </div>
           <div class="mb-3">
             <label class="form-label">Email</label>
-            <form:input path="email" cssClass="form-control" type="email" required="true"/>
+            <form:input path="email" cssClass="form-control" type="email"/>
+            <form:errors path="email" cssClass="text-danger"/>
           </div>
           <div class="mb-3">
             <label class="form-label">Password</label>
-            <form:input path="password" cssClass="form-control" type="password" required="true"/>
+            <form:password path="password" cssClass="form-control"/>
+            <form:errors path="password" cssClass="text-danger"/>
           </div>
           <div class="d-grid">
             <button type="submit" class="btn btn-boston">Register</button>

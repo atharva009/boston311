@@ -7,9 +7,11 @@ import com.boston311.model.Complaint;
 import com.boston311.model.Department;
 import com.boston311.model.Worker;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,9 +36,15 @@ public class DepartmentController {
         return "department/register";
     }
 
-    // Process registration
+    // Process registration with validation
     @PostMapping("/register")
-    public String registerDepartment(@ModelAttribute Department department) {
+    public String registerDepartment(@ModelAttribute("department") @Valid Department department,
+                                     BindingResult result,
+                                     Model model) {
+        if (result.hasErrors()) {
+            return "department/register";
+        }
+
         departmentDAO.saveDepartment(department);
         return "redirect:/department/login";
     }
@@ -48,9 +56,16 @@ public class DepartmentController {
         return "department/login";
     }
 
-    // Process login
+    // Process login with validation
     @PostMapping("/login")
-    public String loginDepartment(@ModelAttribute Department department, HttpSession session, Model model) {
+    public String loginDepartment(@ModelAttribute("department") @Valid Department department,
+                                  BindingResult result,
+                                  HttpSession session,
+                                  Model model) {
+        if (result.hasErrors()) {
+            return "department/login";
+        }
+
         Department existing = departmentDAO.getDepartmentByEmail(department.getEmail());
 
         if (existing != null && existing.getPassword().equals(department.getPassword())) {
@@ -74,11 +89,35 @@ public class DepartmentController {
         List<Complaint> complaints = complaintDAO.getByDepartmentId(deptId);
         List<Worker> workers = workerDAO.getWorkersByDepartment(deptId);
 
+        // Calculate status counts
+        long openCount = complaints.stream().filter(c -> "Open".equalsIgnoreCase(c.getStatus())).count();
+        long inProgressCount = complaints.stream().filter(c -> "In Progress".equalsIgnoreCase(c.getStatus())).count();
+        long resolvedCount = complaints.stream().filter(c -> "Resolved".equalsIgnoreCase(c.getStatus())).count();
+
         model.addAttribute("complaints", complaints);
         model.addAttribute("workers", workers);
         model.addAttribute("departmentName", session.getAttribute("departmentName"));
+        model.addAttribute("openCount", openCount);
+        model.addAttribute("inProgressCount", inProgressCount);
+        model.addAttribute("resolvedCount", resolvedCount);
 
         return "department/dashboard";
+    }
+
+    // Assign worker to a complaint
+    @PostMapping("/assign")
+    public String assignWorkerToComplaint(@RequestParam("complaintId") int complaintId,
+                                          @RequestParam("workerId") int workerId,
+                                          HttpSession session) {
+        Integer deptId = (Integer) session.getAttribute("departmentId");
+        if (deptId == null) {
+            return "redirect:/department/login";
+        }
+
+        complaintDAO.assignWorker(complaintId, workerId);
+        complaintDAO.updateStatus(complaintId, "In Progress");
+
+        return "redirect:/department/dashboard";
     }
 
     // Logout

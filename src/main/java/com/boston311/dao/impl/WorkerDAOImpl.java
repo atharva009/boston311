@@ -32,9 +32,31 @@ public class WorkerDAOImpl implements WorkerDAO {
     }
 
     @Override
+    public Worker getWorkerByEmail(String email) {
+        List<Worker> result = getSession()
+                .createQuery("from Worker where email = :email", Worker.class)
+                .setParameter("email", email)
+                .getResultList();
+        return result.isEmpty() ? null : result.get(0);
+    }
+
+    @Override
     public List<Worker> getWorkersByDepartment(int departmentId) {
-        return getSession().createQuery("from Worker where department.id = :deptId", Worker.class)
+        return getSession()
+                .createQuery("from Worker where department.id = :deptId", Worker.class)
                 .setParameter("deptId", departmentId)
                 .getResultList();
+    }
+
+    @Override
+    public List<Worker> getAllWorkers() {
+        return getSession()
+                .createQuery("from Worker", Worker.class)
+                .getResultList();
+    }
+
+    @Override
+    public void updateWorker(Worker worker) {
+        getSession().merge(worker);
     }
 }

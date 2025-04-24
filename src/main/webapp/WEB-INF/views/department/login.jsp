@@ -39,6 +39,9 @@
     .footer-link {
       font-size: 0.9rem;
     }
+    .text-danger {
+      font-size: 0.875rem;
+    }
   </style>
 </head>
 <body>
@@ -52,11 +55,13 @@
         <form:form action="/department/login" method="post" modelAttribute="department">
           <div class="mb-3">
             <label class="form-label">Email</label>
-            <form:input path="email" cssClass="form-control" type="email" required="true"/>
+            <form:input path="email" cssClass="form-control" type="email" />
+            <form:errors path="email" cssClass="text-danger" />
           </div>
           <div class="mb-3">
             <label class="form-label">Password</label>
-            <form:input path="password" cssClass="form-control" type="password" required="true"/>
+            <form:password path="password" cssClass="form-control" />
+            <form:errors path="password" cssClass="text-danger" />
           </div>
           <div class="d-grid">
             <button type="submit" class="btn btn-boston">Log In</button>

@@ -1,8 +1,10 @@
 package com.boston311.model;
 
 import jakarta.persistence.*;
-
-import java.util.Date;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "citizen")
@@ -12,12 +14,24 @@ public class Citizen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotBlank(message = "Name is required")
     private String name;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     private String email;
+
+    @NotBlank(message = "Phone is required")
+    @Pattern(regexp = "\\d{10}", message = "Phone must be 10 digits")
     private String phone;
 
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     private String password;
+
     private String address;
+
+    @Pattern(regexp = "\\d{5}", message = "Zipcode must be 5 digits")
     private String zipcode;
 
     // Getters and Setters
