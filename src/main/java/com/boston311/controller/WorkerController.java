@@ -9,6 +9,7 @@ import com.boston311.model.Worker;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,6 +31,9 @@ public class WorkerController {
     @Autowired
     private ComplaintDAO complaintDAO;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Show worker registration form
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -48,6 +52,7 @@ public class WorkerController {
             return "worker/register";
         }
 
+        worker.setPassword(passwordEncoder.encode(worker.getPassword()));
         workerDAO.saveWorker(worker);
         return "redirect:/worker/login";
     }
@@ -70,7 +75,7 @@ public class WorkerController {
         }
 
         Worker dbWorker = workerDAO.getWorkerByEmail(worker.getEmail());
-        if (dbWorker != null && dbWorker.getPassword().equals(worker.getPassword())) {
+        if (dbWorker != null && passwordEncoder.matches(worker.getPassword(), dbWorker.getPassword())) {
             session.setAttribute("workerId", dbWorker.getId());
             session.setAttribute("workerName", dbWorker.getName());
             return "redirect:/worker/dashboard";
@@ -124,9 +129,7 @@ public class WorkerController {
             return "redirect:/worker/login";
         }
 
-        // Update status to "Resolved"
         complaintDAO.updateStatus(complaintId, "Resolved");
-
         return "redirect:/worker/dashboard";
     }
 
@@ -137,7 +140,7 @@ public class WorkerController {
 
         Worker worker = workerDAO.getWorkerById(workerId);
         model.addAttribute("worker", worker);
-        model.addAttribute("departments", departmentDAO.getAllDepartments()); // ✅ Add this
+        model.addAttribute("departments", departmentDAO.getAllDepartments());
         return "worker/profile";
     }
 
@@ -153,7 +156,6 @@ public class WorkerController {
             return "worker/profile";
         }
 
-        // preserve email and password
         Worker existing = workerDAO.getWorkerById(worker.getId());
         worker.setEmail(existing.getEmail());
         worker.setPassword(existing.getPassword());
@@ -167,7 +169,6 @@ public class WorkerController {
         return "redirect:/worker/dashboard";
     }
 
-    // Logout
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();

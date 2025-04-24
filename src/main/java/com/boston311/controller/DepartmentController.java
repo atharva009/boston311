@@ -9,6 +9,7 @@ import com.boston311.model.Worker;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,6 +30,9 @@ public class DepartmentController {
     @Autowired
     private WorkerDAO workerDAO;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Show registration form
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -36,7 +40,7 @@ public class DepartmentController {
         return "department/register";
     }
 
-    // Process registration with validation
+    // Process registration with validation and hashed password
     @PostMapping("/register")
     public String registerDepartment(@ModelAttribute("department") @Valid Department department,
                                      BindingResult result,
@@ -45,6 +49,7 @@ public class DepartmentController {
             return "department/register";
         }
 
+        department.setPassword(passwordEncoder.encode(department.getPassword()));
         departmentDAO.saveDepartment(department);
         return "redirect:/department/login";
     }
@@ -56,7 +61,7 @@ public class DepartmentController {
         return "department/login";
     }
 
-    // Process login with validation
+    // Process login with hashed password validation
     @PostMapping("/login")
     public String loginDepartment(@ModelAttribute("department") @Valid Department department,
                                   BindingResult result,
@@ -68,7 +73,7 @@ public class DepartmentController {
 
         Department existing = departmentDAO.getDepartmentByEmail(department.getEmail());
 
-        if (existing != null && existing.getPassword().equals(department.getPassword())) {
+        if (existing != null && passwordEncoder.matches(department.getPassword(), existing.getPassword())) {
             session.setAttribute("departmentId", existing.getId());
             session.setAttribute("departmentName", existing.getName());
             return "redirect:/department/dashboard";
@@ -89,7 +94,6 @@ public class DepartmentController {
         List<Complaint> complaints = complaintDAO.getByDepartmentId(deptId);
         List<Worker> workers = workerDAO.getWorkersByDepartment(deptId);
 
-        // Calculate status counts
         long openCount = complaints.stream().filter(c -> "Open".equalsIgnoreCase(c.getStatus())).count();
         long inProgressCount = complaints.stream().filter(c -> "In Progress".equalsIgnoreCase(c.getStatus())).count();
         long resolvedCount = complaints.stream().filter(c -> "Resolved".equalsIgnoreCase(c.getStatus())).count();

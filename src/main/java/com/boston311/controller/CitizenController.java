@@ -4,11 +4,10 @@ import com.boston311.dao.CitizenDAO;
 import com.boston311.dao.ComplaintDAO;
 import com.boston311.model.Citizen;
 import com.boston311.model.Complaint;
-
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,6 +26,9 @@ public class CitizenController {
     @Autowired
     private ComplaintDAO complaintDAO;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // Show registration form
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
@@ -41,6 +43,9 @@ public class CitizenController {
         if (result.hasErrors()) {
             return "citizen/register";
         }
+
+        // Hash password before saving
+        citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizenDAO.saveCitizen(citizen);
         return "redirect:/citizen/login";
     }
@@ -52,7 +57,7 @@ public class CitizenController {
         return "citizen/login";
     }
 
-    // Handle login (very basic - match by email only for now)
+    // Handle login
     @PostMapping("/login")
     public String loginCitizen(@ModelAttribute("citizen") @Valid Citizen formCitizen,
                                BindingResult result, HttpSession session, Model model) {
@@ -62,12 +67,15 @@ public class CitizenController {
 
         List<Citizen> citizens = citizenDAO.getAllCitizens();
         for (Citizen c : citizens) {
-            if (c.getEmail().equalsIgnoreCase(formCitizen.getEmail())) {
+            if (c.getEmail().equalsIgnoreCase(formCitizen.getEmail())
+                    && passwordEncoder.matches(formCitizen.getPassword(), c.getPassword())) {
+
                 session.setAttribute("loggedInCitizen", c);
                 return "redirect:/citizen/dashboard";
             }
         }
-        model.addAttribute("error", "Invalid email");
+
+        model.addAttribute("error", "Invalid email or password.");
         return "citizen/login";
     }
 
