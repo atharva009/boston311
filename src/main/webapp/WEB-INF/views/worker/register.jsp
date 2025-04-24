@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ include file="/WEB-INF/views/fragments/navbar.jspf" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>

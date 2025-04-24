@@ -1,0 +1,33 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: atharva
+  Date: 4/23/25
+  Time: 20:19
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold text-primary" href="/">Boston 311</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/citizen/login">Citizen</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/department/login">Department</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/worker/login">Worker</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-danger" href="/logoutAndHome">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>

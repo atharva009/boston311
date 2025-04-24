@@ -5,7 +5,8 @@
   Time: 23:24
   To change this template use File | Settings | File Templates.
 --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ include file="/WEB-INF/views/fragments/navbar.jspf" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>

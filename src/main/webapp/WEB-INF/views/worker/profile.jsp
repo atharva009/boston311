@@ -7,6 +7,7 @@
 --%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ include file="/WEB-INF/views/fragments/navbar.jspf" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
