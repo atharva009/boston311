@@ -1,0 +1,132 @@
+// Controllers for MyBoston311
+
+
+/* Citizen Controller */
+
+@Controller
+@RequestMapping("/citizen")
+public class CitizenController {
+
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("citizen", new Citizen());
+        return "citizen/register";
+    }
+
+    @PostMapping("/register")
+    public String registerCitizen(@ModelAttribute Citizen citizen) {
+        // Call DAO to save citizen
+        return "redirect:/citizen/login";
+    }
+
+    @GetMapping("/login")
+    public String showLoginForm() {
+        return "citizen/login";
+    }
+
+    @GetMapping("/dashboard")
+    public String showDashboard(Model model) {
+        // Load citizen data
+        return "citizen/dashboard";
+    }
+
+    @GetMapping("/complaints")
+    public String viewComplaints(Model model) {
+        // Load citizen complaints
+        return "citizen/complaints";
+    }
+}
+
+
+/* Complaint Controller */
+
+@Controller
+@RequestMapping("/complaints")
+public class ComplaintController {
+
+    @GetMapping("/new")
+    public String showComplaintForm(Model model) {
+        model.addAttribute("complaint", new Complaint());
+        return "complaint/new";
+    }
+
+    @PostMapping("/submit")
+    public String submitComplaint(@ModelAttribute Complaint complaint) {
+        // Save complaint via DAO
+        return "redirect:/citizen/complaints";
+    }
+
+    @GetMapping("/all")
+    public String viewAllComplaints(Model model) {
+        // Admin view: load all complaints
+        return "complaint/list";
+    }
+
+    @GetMapping("/{id}")
+    public String viewComplaintDetails(@PathVariable int id, Model model) {
+        // Load single complaint
+        return "complaint/details";
+    }
+}
+
+/* Department Controller */
+
+@Controller
+@RequestMapping("/department")
+public class DepartmentController {
+
+    @GetMapping("/dashboard")
+    public String departmentDashboard(Model model) {
+        // Load open complaints for the department
+        return "department/dashboard";
+    }
+
+    @GetMapping("/complaints")
+    public String viewDepartmentComplaints(Model model) {
+        // Sorted or filtered list
+        return "department/complaints";
+    }
+
+    @GetMapping("/assign/{complaintId}")
+    public String showAssignForm(@PathVariable int complaintId, Model model) {
+        // Load available workers and complaint
+        return "department/assign";
+    }
+
+    @PostMapping("/assign")
+    public String assignWorker(
+        @RequestParam int complaintId,
+        @RequestParam int workerId
+    ) {
+        // Update complaint with assigned worker
+        return "redirect:/department/complaints";
+    }
+}
+
+/* Worker Controller */
+
+@Controller
+@RequestMapping("/worker")
+public class WorkerController {
+
+    @GetMapping("/dashboard")
+    public String workerDashboard(Model model) {
+        // Load assigned complaints
+        return "worker/dashboard";
+    }
+
+    @GetMapping("/complaint/{id}")
+    public String viewAssignedComplaint(@PathVariable int id, Model model) {
+        // Load details
+        return "worker/complaint";
+    }
+
+    @PostMapping("/updateStatus")
+    public String updateComplaintStatus(
+        @RequestParam int complaintId,
+        @RequestParam String status
+    ) {
+        // Update complaint status via DAO
+        return "redirect:/worker/dashboard";
+    }
+}
